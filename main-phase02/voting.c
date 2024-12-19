@@ -376,7 +376,7 @@ void EventRegisterCandidate(int cid, int pid, int did) {
 
     printf("\tCandidates %d\n", pid);
     printCandidates(root);
-    printf("\n");
+    printf("\nDONE\n");
 
 }
 
