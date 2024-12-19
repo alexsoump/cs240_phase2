@@ -160,7 +160,7 @@ void printVoters(Voter* ptr){
 void printCandidates(Candidate* ptr){ // pointer to the root of the candidates tree of the party
     if(!ptr) return; // base case
     printCandidates(ptr->lc);
-    printf("%d %d", ptr->cid, ptr->did);
+    printf("%d %d,", ptr->cid, ptr->did);
     printCandidates(ptr->rc);
 }
 /* Initialize the hash parameters */ 
