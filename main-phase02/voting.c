@@ -304,7 +304,7 @@ void EventCreateStation(int sid, int did) {
         printf("%d, ", curr->sid);
         curr = curr->next;
     }
-    printf("DONE\n");
+    printf("\nDONE\n");
 }
 
 void EventRegisterVoter(int vid, int sid) {
@@ -320,7 +320,8 @@ void EventRegisterVoter(int vid, int sid) {
     }
     addVoter(curr, vid);
     printf("Voters[%d]", sid);
-    printVoters(curr->voters); 
+    printVoters(curr->voters);
+    printf("\nDONE\n"); 
 }   
 
 void EventRegisterCandidate(int cid, int pid, int did) {
