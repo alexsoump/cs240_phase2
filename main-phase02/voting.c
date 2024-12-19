@@ -144,7 +144,7 @@ void addVoter(Station* ptr, int vid) {
         // This ensures left child is checked before the right child when popped
         stack[++top] = current->rc;
         stack[++top] = current->lc;
-        printf("Added voter %d, child of %d", vid, newVoter->parent);
+        printf("Added voter %d, child of %d", vid, newVoter->parent->vid);
     }
     free(stack);
 }
