@@ -319,7 +319,7 @@ void EventRegisterVoter(int vid, int sid) {
         return;
     }
     addVoter(curr, vid);
-    printf("Voters[%sid]", sid);
+    printf("Voters[%d]", sid);
     printVoters(curr->voters); 
 }   
 
