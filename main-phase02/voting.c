@@ -156,6 +156,13 @@ void printVoters(Voter* ptr){
     printVoters(ptr->rc);
 
 }
+/*printVoter: prints the candidates tree according to inorder traversal*/
+void printCandidates(Candidate* ptr){ // pointer to the root of the candidates tree of the party
+    if(!ptr) return; // base case
+    printCandidates(ptr->lc);
+    printf("%d %d", ptr->cid, ptr->did);
+    printCandidates(ptr->rc);
+}
 /* Initialize the hash parameters */ 
 void initializeHashing() {
     srand(time(NULL));
@@ -367,6 +374,9 @@ void EventRegisterCandidate(int cid, int pid, int did) {
     if(prev->cid > cid) prev->lc = newCandidate; // case candidate is the smallest child 
     else prev->rc = newCandidate; // candidate is the biggest child, so it is the rc of its parent
 
+    printf("\tCandidates %d\n", pid);
+    printCandidates(root);
+    printf("\n");
 
 }
 
