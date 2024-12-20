@@ -156,12 +156,21 @@ void printVoters(Voter* ptr){
     printVoters(ptr->rc);
 
 }
-/*printVoter: prints the candidates tree according to inorder traversal*/
+/*printCandidates: prints the candidates tree according to inorder traversal*/
 void printCandidates(Candidate* ptr){ // pointer to the root of the candidates tree of the party
     if(!ptr) return; // base case
     printCandidates(ptr->lc);
-    printf("%d %d,", ptr->cid, ptr->did);
+    printf("%d %d, ", ptr->cid, ptr->did);
     printCandidates(ptr->rc);
+}
+/*voters_lookup: searched for voter with vid in a tree of a station*/
+Voter* voters_lookup(Voter* ptr, int vid){
+    if(!ptr) return NULL; // base case
+    if(ptr->vid == vid) return ptr; // voter found
+    Voter* found = voters_lookup(ptr->lc, vid); // left subtree
+    if (found) return found;  // if found in left subtree, return the result
+    return voters_lookup(ptr->rc, vid);     // right subtree
+
 }
 /* Initialize the hash parameters */ 
 void initializeHashing() {
@@ -382,7 +391,57 @@ void EventRegisterCandidate(int cid, int pid, int did) {
 
 void EventVote(int vid, int sid, int cid, int pid) {
     DebugPrint("V %d %d %d %d\n", vid, sid, cid, pid);
-    // TODO
+
+    /* first we locate the station with 'sid' in the hash table */
+    Station* sPtr = hash(sid); // station pointer
+    while(sPtr && sPtr->sid!=sid){
+        sPtr = sPtr->next;
+    }
+    if(!sPtr){ fprintf(stderr, "Station not found.\n");  return; } // station not found
+
+    /* step 2: we locate the voter in the voters tree */
+    Voter* vPtr = sPtr->voters; // voter pointer
+    vPtr = voters_lookup(vPtr,vid);
+    if(!vPtr) { fprintf(stderr, "Voter not found.\n");  return; }
+    vPtr->voted = true; // voter voted
+    int did = sPtr->did; // district of the voter
+
+    /* step 3: apply the effects of the vote */
+    int i = 0;
+    bool found = false;
+    while(i<DISTRICTS_SZ && !found){
+        if(Districts[i].did == did){
+            found = true; 
+            break;
+        }
+        i++; // step
+    }
+    
+    if(cid == -1) {Districts[i].blanks++; return;}
+    if(cid == -2) {Districts[i].invalids++; return;}
+
+    int j = 0;
+    found = false;
+    while(j < PARTIES_SZ && !found){ // find party index
+        if(Parties[j].pid == pid){
+            found = true;
+            break;
+        }
+        j++; // step
+    }
+
+    Candidate* cPtr = Parties[j].candidates;
+    while(cPtr && cPtr->cid!=cid){ // find candidate
+        if(cPtr->cid < cid) cPtr = cPtr->rc;
+        else cPtr = cPtr->lc;
+    }
+    if(!cPtr){
+        printf("Candidate not found.\n");
+        return;
+    }
+    cPtr->votes++; // increment candidate votes
+    Districts[i].partyVotes[j]++; // increment party votes
+
 }
 void EventCountVotes(int did) {
     DebugPrint("M %d\n", did);
