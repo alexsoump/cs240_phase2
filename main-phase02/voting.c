@@ -442,6 +442,16 @@ void EventVote(int vid, int sid, int cid, int pid) {
     cPtr->votes++; // increment candidate votes
     Districts[i].partyVotes[j]++; // increment party votes
 
+    /* finally, print whatever necessary */
+    printf("\tDistrict[%d]\n", did);
+    printf("\tblanks %d\n", Districts[i].blanks);
+    printf("\tinvalids %d\n", Districts[i].invalids);
+    printf("\tParty votes: \n");
+    for(int k = 0; k < PARTIES_SZ; k++){
+        printf("\t%d %d,\n", Parties[k].pid, Districts[i].partyVotes[k]);
+    }
+    printf("DONE\n");
+
 }
 void EventCountVotes(int did) {
     DebugPrint("M %d\n", did);
