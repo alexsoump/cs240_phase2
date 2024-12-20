@@ -483,7 +483,7 @@ void EventCountVotes(int did) {
     /* calculate eklogiko metro*/
     int count = 0, found = 0;
     while(count < 56 && found == 0){ // find the district
-        if(Districts[count].did = did){
+        if(Districts[count].did == did){
             found = 1;
             break;
         }
