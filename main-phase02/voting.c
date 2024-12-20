@@ -156,11 +156,26 @@ void printVoters(Voter* ptr){
     printVoters(ptr->rc);
 
 }
+/*printVoters2: just like printVoters but formatted according to the printStations event*/
+void printVoters2(Voter* ptr){
+    if(!ptr) return; // base case
+    printVoters(ptr->lc);
+    printf("\t%d %d, \n", ptr->vid, ptr->voted);
+    printVoters(ptr->rc);
+
+}
 /*printCandidates: prints the candidates tree according to inorder traversal*/
 void printCandidates(Candidate* ptr){ // pointer to the root of the candidates tree of the party
     if(!ptr) return; // base case
     printCandidates(ptr->lc);
     printf("%d %d, ", ptr->cid, ptr->did);
+    printCandidates(ptr->rc);
+}
+/*printCandidates2: same as above but formatted for printParty event*/
+void printCandidates2(Candidate* ptr){ // pointer to the root of the candidates tree of the party
+    if(!ptr) return; // base case
+    printCandidates(ptr->lc);
+    printf("\t%d %d,\n", ptr->cid, ptr->votes);
     printCandidates(ptr->rc);
 }
 /*voters_lookup: searched for voter with vid in a tree of a station*/
@@ -461,34 +476,127 @@ void EventVote(int vid, int sid, int cid, int pid) {
     printf("DONE\n");
 
 }
+
 void EventCountVotes(int did) {
     DebugPrint("M %d\n", did);
-    // TODO
+
+    /* calculate eklogiko metro*/
+    int count = 0, found = 0;
+    while(count < 56 && found == 0){ // find the district
+        if(Districts[count].did = did){
+            found = 1;
+            break;
+        }
+        count++;
+    }
+    if(found == 0) return; // district not found
+    int index = count;
+    
+    double eklogiko_metro;
+    int valid_votes = 0;
+    for(int i = 0; i < PARTIES_SZ; i++){ // calculate the votes
+        valid_votes+= Districts[index].partyVotes[i];
+    }
+
+    if(Districts[index].seats == 0){
+        eklogiko_metro = 0;
+    }else{
+        eklogiko_metro = valid_votes / Districts[index].seats;
+    }
+
+    int partyElected[5];
+    for(int i = 0; i < PARTIES_SZ; i++){
+        if(eklogiko_metro == 0){
+            partyElected[i] = 0;
+        }else{
+            partyElected[i] = floor(Districts[index].partyVotes[i] / eklogiko_metro);
+        }
+        //TODO: case partyElected is bigger than party Candidates
+
+        Parties[i].electedCount += partyElected[i]; // add to party elected field
+        Districts[index].seats -= partyElected[i];  // subtract from district seats
+
+        
+    }
+
+
+
 }
+
 void EventFormParliament(void) {
     DebugPrint("N\n");
     // TODO
 }
+
 void EventPrintDistrict(int did) {
     DebugPrint("I %d\n", did);
-    // TODO
+    int count = 0, found = 0;
+    while(count < DISTRICTS_SZ){
+        if(Districts[count].did == did){
+            found = 1;
+            break;
+        }
+        count++;
+    }
+    if(found == 0){
+        printf("District with did %d not found!\n", did);
+        return;
+    }
+    
+    printf("\tseats: %d\n", Districts[count].seats);
+    printf("\tblanks: %d\n", Districts[count].blanks);
+    printf("\tinvalids: %d\n", Districts[count].invalids);
+    printf("\tpartyVotes\n");
+    for(int i=0; i<PARTIES_SZ;i++){
+        printf("\t%d %d,\n", Parties[i].pid ,Districts[count].partyVotes[i]);
+    }
+    printf("DONE\n");   
 }
+
 void EventPrintStation(int sid) {
     DebugPrint("J %d\n", sid);
-    // TODO
+    Station* ptr = StationsHT[hash(sid)];
+    while(ptr){
+        if(ptr->sid == sid) break;
+        ptr = ptr->next;
+    }
+    if(!ptr){
+        printf("Station not found.\nDONE\n");
+        return;
+    }
+    printf("\tregistered %d\n", ptr->registered);
+    printf("\tvoters\n");
+    printVoters2(ptr->voters);
+    printf("DONE\n");
 }
+
 void EventPrintParty(int pid) {
     DebugPrint("K %d\n", pid);
-    // TODO
+    
+    printf("\telected\n");
+    int count = 0, found = 0;
+    while(count < PARTIES_SZ){
+        if(Parties[count].pid == pid){
+            found = 1;
+            break;
+        }
+    }
+    if(found == 0) return; // party not found
+    printCandidates2(Parties[count].candidates);
+    printf("DONE\n");
+
 }
+
 void EventPrintParliament(void) {
     DebugPrint("L\n");
     // TODO
 }
+
 void EventBonusUnregisterVoter(int vid, int sid) {
     DebugPrint("BU %d %d\n", vid, sid);
     // TODO
 }
+
 void EventBonusFreeMemory(void) {
     DebugPrint("BF\n");
     // TODO
