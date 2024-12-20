@@ -417,30 +417,38 @@ void EventVote(int vid, int sid, int cid, int pid) {
         i++; // step
     }
     
-    if(cid == -1) {Districts[i].blanks++; return;}
-    if(cid == -2) {Districts[i].invalids++; return;}
-
-    int j = 0;
-    found = false;
-    while(j < PARTIES_SZ && !found){ // find party index
-        if(Parties[j].pid == pid){
-            found = true;
-            break;
+    if(cid == -1) {
+        Districts[i].blanks++;
+    }else if(cid == -2) {
+        Districts[i].invalids++;
+    }else{
+        int j = 0;
+        found = false;
+        while(j < PARTIES_SZ && !found){ // find party index
+            if(Parties[j].pid == pid){
+                found = true;
+                break;
+            }
+            j++; // step
         }
-        j++; // step
-    }
 
-    Candidate* cPtr = Parties[j].candidates;
-    while(cPtr && cPtr->cid!=cid){ // find candidate
-        if(cPtr->cid < cid) cPtr = cPtr->rc;
-        else cPtr = cPtr->lc;
+        Candidate* cPtr = Parties[j].candidates;
+        while(cPtr && cPtr->cid!=cid){ // find candidate
+            if(cPtr->cid < cid) cPtr = cPtr->rc;
+            else cPtr = cPtr->lc;
+        }
+        if(!cPtr){
+            printf("Candidate not found.\n");
+            return;
+        }
+        cPtr->votes++; // increment candidate votes
+        Districts[i].partyVotes[j]++; // increment party votes
+        
     }
-    if(!cPtr){
-        printf("Candidate not found.\n");
-        return;
-    }
-    cPtr->votes++; // increment candidate votes
-    Districts[i].partyVotes[j]++; // increment party votes
+    
+
+
+    
 
     /* finally, print whatever necessary */
     printf("\tDistrict[%d]\n", did);
