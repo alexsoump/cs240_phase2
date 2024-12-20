@@ -159,9 +159,9 @@ void printVoters(Voter* ptr){
 /*printVoters2: just like printVoters but formatted according to the printStations event*/
 void printVoters2(Voter* ptr){
     if(!ptr) return; // base case
-    printVoters(ptr->lc);
+    printVoters2(ptr->lc);
     printf("\t%d %d, \n", ptr->vid, ptr->voted);
-    printVoters(ptr->rc);
+    printVoters2(ptr->rc);
 
 }
 /*printCandidates: prints the candidates tree according to inorder traversal*/
@@ -174,9 +174,9 @@ void printCandidates(Candidate* ptr){ // pointer to the root of the candidates t
 /*printCandidates2: same as above but formatted for printParty event*/
 void printCandidates2(Candidate* ptr){ // pointer to the root of the candidates tree of the party
     if(!ptr) return; // base case
-    printCandidates(ptr->lc);
+    printCandidates2(ptr->lc);
     printf("\t%d %d,\n", ptr->cid, ptr->votes);
-    printCandidates(ptr->rc);
+    printCandidates2(ptr->rc);
 }
 /*voters_lookup: searched for voter with vid in a tree of a station*/
 Voter* voters_lookup(Voter* ptr, int vid){
