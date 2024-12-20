@@ -393,7 +393,7 @@ void EventVote(int vid, int sid, int cid, int pid) {
     DebugPrint("V %d %d %d %d\n", vid, sid, cid, pid);
 
     /* first we locate the station with 'sid' in the hash table */
-    Station* sPtr = hash(sid); // station pointer
+    Station* sPtr = StationsHT[hash(sid)]; // station pointer
     while(sPtr && sPtr->sid!=sid){
         sPtr = sPtr->next;
     }
