@@ -580,6 +580,7 @@ void EventPrintParty(int pid) {
             found = 1;
             break;
         }
+        count++;
     }
     if(found == 0) return; // party not found
     printCandidates2(Parties[count].candidates);
